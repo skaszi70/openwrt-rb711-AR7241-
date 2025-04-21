@@ -1,0 +1,7 @@
+- name: Verify device name
+  run: |
+    cd openwrt
+    echo "=== Elérhető MikroTik eszközök ==="
+    grep -r "define Device" target/linux/ath79/image/mikrotik.mk
+    echo "=== SUPPORTED_DEVICES lista ==="
+    grep -r "SUPPORTED_DEVICES" target/linux/ath79/image/mikrotik.mk
