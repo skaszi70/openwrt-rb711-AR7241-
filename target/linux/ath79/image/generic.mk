@@ -4,3 +4,4 @@ define Device/mikrotik_rb711
 	BOARDNAME := rb711
 	IMAGE_SIZE := 16256k
 endef
+TARGET_DEVICES += mikrotik_rb711
