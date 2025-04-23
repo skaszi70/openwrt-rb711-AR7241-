@@ -1,0 +1,56 @@
+name: Build OpenWrt for Mikrotik RB711
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git
+
+      - name: Clone OpenWrt
+        run: |
+          git clone --depth=1 https://github.com/openwrt/openwrt.git
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Add Mikrotik RB711 support
+        run: |
+          cd openwrt
+          mkdir -p target/linux/ath79/dts
+          mkdir -p target/linux/ath79/image
+          echo 'DTS fájl tartalma itt' > target/linux/ath79/dts/mikrotik_rb711.dts
+          echo 'Makefile módosítás itt' >> target/linux/ath79/image/generic.mk
+
+      - name: Configure build
+        run: |
+          cd openwrt
+          cat << "EOF" > .config
+          CONFIG_TARGET_ath79=y
+          CONFIG_TARGET_ath79_generic=y
+          CONFIG_TARGET_ath79_generic_DEVICE_mikrotik_rb711=y
+          CONFIG_PACKAGE_luci=y
+          CONFIG_PACKAGE_kmod-ath9k=y
+          CONFIG_PACKAGE_kmod-nand=y
+          CONFIG_PACKAGE_nand-utils=y
+          CONFIG_PACKAGE_kmod-mtd-rw=y
+          EOF
+          make defconfig
+
+      - name: Build firmware
+        run: |
+          cd openwrt
+          make -j$(nproc) V=s
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openwrt-rb711-firmware
+          path: openwrt/bin/targets/ath79/generic/
