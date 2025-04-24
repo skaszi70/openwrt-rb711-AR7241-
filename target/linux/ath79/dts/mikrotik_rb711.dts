@@ -1,0 +1,30 @@
+/dts-v1/;
+/include/ "ar7241.dtsi"
+
+/ {
+    model = "MikroTik RB711";
+    compatible = "mikrotik,rb711", "qca,ar7241";
+
+    chosen {
+        bootargs = "console=ttyS0,115200";
+    };
+
+    memory@0 {
+        device_type = "memory";
+        reg = <0x00000000 0x04000000>; /* 64 MB RAM */
+    };
+
+    flash@1f000000 {
+        compatible = "cfi-flash";
+        reg = <0x1f000000 0x01000000>; /* 16 MB NOR flash */
+    };
+};
+
+&eth0 {
+    status = "okay";
+};
+
+&wmac {
+    status = "okay";
+    mtd-mac-address = <&art 0x0>;
+};
