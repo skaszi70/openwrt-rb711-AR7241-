@@ -12,7 +12,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git
+          sudo apt-get install -y build-essential git libncurses5-dev gawk gettext wget unzip file libssl-dev zlib1g-dev
 
       - name: Clone OpenWrt
         run: |
@@ -26,8 +26,8 @@ jobs:
           cd openwrt
           mkdir -p target/linux/ath79/dts
           mkdir -p target/linux/ath79/image
-          echo 'DTS fájl tartalma itt' > target/linux/ath79/dts/mikrotik_rb711.dts
-          echo 'Makefile módosítás itt' >> target/linux/ath79/image/generic.mk
+          echo '/* Mikrotik RB711 DTS fájl tartalma */' > target/linux/ath79/dts/mikrotik_rb711.dts
+          echo '# Mikrotik RB711 Makefile módosítás' >> target/linux/ath79/image/generic.mk
 
       - name: Configure build
         run: |
