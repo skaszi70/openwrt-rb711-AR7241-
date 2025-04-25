@@ -6,42 +6,41 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git
+          sudo apt-get install -y build-essential git libncurses5-dev gawk gettext wget unzip file libssl-dev zlib1g-dev
 
-      - name: Clone OpenWrt
+      - name: Clone OpenWrt source
         run: |
           git clone --depth=1 https://github.com/openwrt/openwrt.git
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Add Mikrotik RB711 support
+      - name: Copy DTS and patch generic.mk
         run: |
-          cd openwrt
-          mkdir -p target/linux/ath79/dts
-          mkdir -p target/linux/ath79/image
-          echo 'DTS fájl tartalma itt' > target/linux/ath79/dts/mikrotik_rb711.dts
-          echo 'Makefile módosítás itt' >> target/linux/ath79/image/generic.mk
+          cp target/linux/ath79/dts/mikrotik_rb711.dts openwrt/target/linux/ath79/dts/
+          echo 'define Device/mikrotik_rb711
+  DEVICE_TITLE := MikroTik RB711
+  DEVICE_PACKAGES := kmod-ath9k kmod-ag71xx kmod-swconfig kmod-nand kmod-mtd-rw nand-utils luci
+  IMAGE_SIZE := 16256k
+endef
 
-      - name: Configure build
+TARGET_DEVICES += mikrotik_rb711' >> openwrt/target/linux/ath79/image/generic.mk
+
+      - name: Copy custom config
+        run: |
+          cp openwrt_rb711_final_config_with_newline.config openwrt/.config
+
+      - name: Finalize config
         run: |
           cd openwrt
-          cat << "EOF" > .config
-          CONFIG_TARGET_ath79=y
-          CONFIG_TARGET_ath79_generic=y
-          CONFIG_TARGET_ath79_generic_DEVICE_mikrotik_rb711=y
-          CONFIG_PACKAGE_luci=y
-          CONFIG_PACKAGE_kmod-ath9k=y
-          CONFIG_PACKAGE_kmod-nand=y
-          CONFIG_PACKAGE_nand-utils=y
-          CONFIG_PACKAGE_kmod-mtd-rw=y
-          EOF
           make olddefconfig
 
       - name: Build firmware
@@ -49,7 +48,7 @@ jobs:
           cd openwrt
           make -j$(nproc) V=s
 
-      - name: Upload artifacts
+      - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openwrt-rb711-firmware
