@@ -42,7 +42,7 @@ jobs:
           CONFIG_PACKAGE_nand-utils=y
           CONFIG_PACKAGE_kmod-mtd-rw=y
           EOF
-          make defconfig
+          make olddefconfig
 
       - name: Build firmware
         run: |
