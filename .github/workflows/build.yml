@@ -13,21 +13,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git libncurses5-dev gawk gettext wget unzip file libssl-dev zlib1g-dev
+          sudo apt update
+          sudo apt install -y build-essential git libncurses5-dev gawk gettext wget unzip file libssl-dev zlib1g-dev
 
-      - name: Clone OpenWrt source
+      - name: Clone OpenWrt
         run: |
-          git clone --depth=1 https://github.com/openwrt/openwrt.git
+          git clone https://github.com/openwrt/openwrt.git
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Copy custom .config
+      - name: Apply custom patches
+        run: |
+          cp $GITHUB_WORKSPACE/mikrotik_rb711.dts openwrt/target/linux/ath79/dts/mikrotik_rb711.dts
+          cp $GITHUB_WORKSPACE/generic.mk openwrt/target/linux/ath79/image/generic.mk
+
+      - name: Copy custom config
         run: |
           cp $GITHUB_WORKSPACE/.config openwrt/.config
 
-      - name: Start build
+      - name: Build firmware
         run: |
           cd openwrt
           make defconfig
