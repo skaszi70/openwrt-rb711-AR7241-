@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "ar7100.dtsi"
+
+/ {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    compatible = "qca,ar7241";
+
+    aliases {
+        led-boot = &led1;
+        led-failsafe = &led1;
+        led-running = &led1;
+        led-upgrade = &led1;
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu@0 {
+            device_type = "cpu";
+            compatible = "mips,mips24Kc";
+            reg = <0>;
+        };
+    };
+};
