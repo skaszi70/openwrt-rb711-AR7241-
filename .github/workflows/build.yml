@@ -28,6 +28,7 @@ jobs:
       - name: Apply custom patches
         run: |
           cp $GITHUB_WORKSPACE/target/linux/ath79/dts/mikrotik_rb711.dts openwrt/target/linux/ath79/dts/mikrotik_rb711.dts
+          cp $GITHUB_WORKSPACE/target/linux/ath79/dts/ar7241.dtsi openwrt/target/linux/ath79/dts/ar7241.dtsi
           cp $GITHUB_WORKSPACE/target/linux/ath79/image/generic.mk openwrt/target/linux/ath79/image/generic.mk
 
       - name: Copy custom config
