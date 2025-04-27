@@ -22,12 +22,14 @@ jobs:
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          ./scripts/feeds update luci
+          ./scripts/feeds install -a
 
       - name: Apply custom patches
         run: |
           cp $GITHUB_WORKSPACE/target/linux/ath79/dts/mikrotik_rb711.dts openwrt/target/linux/ath79/dts/mikrotik_rb711.dts
           cp $GITHUB_WORKSPACE/target/linux/ath79/image/generic.mk openwrt/target/linux/ath79/image/generic.mk
-          
+
       - name: Copy custom config
         run: |
           cp $GITHUB_WORKSPACE/.config openwrt/.config
