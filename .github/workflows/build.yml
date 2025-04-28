@@ -1,1 +1,48 @@
-dtc -I dts -O dtb -o /dev/null ar7241.dtsi
+name: Build OpenWrt for Mikrotik RB711
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential git libncurses5-dev gawk gettext wget unzip file libssl-dev zlib1g-dev
+
+      - name: Clone OpenWrt
+        run: |
+          git clone https://github.com/openwrt/openwrt.git
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          ./scripts/feeds update luci
+          ./scripts/feeds install -a
+
+      - name: Apply custom patches
+        run: |
+          cp $GITHUB_WORKSPACE/target/linux/ath79/dts/mikrotik_rb711.dts openwrt/target/linux/ath79/dts/mikrotik_rb711.dts
+          cp $GITHUB_WORKSPACE/target/linux/ath79/dts/ar7241.dtsi openwrt/target/linux/ath79/dts/ar7241.dtsi
+          cp $GITHUB_WORKSPACE/target/linux/ath79/image/generic.mk openwrt/target/linux/ath79/image/generic.mk
+
+      - name: Copy custom config
+        run: |
+          cp $GITHUB_WORKSPACE/.config openwrt/.config
+
+      - name: Build firmware
+        run: |
+          cd openwrt
+          make defconfig
+          make -j1 V=sc
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: rb711-build
+          path: openwrt/bin/targets/ 
