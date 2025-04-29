@@ -25,4 +25,4 @@
     };
 };
 
-/include/ "ar7100.dtsi"
+#include "ar7100.dtsi"
