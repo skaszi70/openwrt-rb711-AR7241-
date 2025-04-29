@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
-/* Device Tree for Qualcomm Atheros AR7100 SoC */
+#address-cells = <1>;
+#size-cells = <1>;
+compatible = "qca,ar7100";
 
-/ {
-    #address-cells = <1>;
-    #size-cells = <1>;
-    compatible = "qca,ar7100";
-
-    memory@0 {
-        device_type = "memory";
-        reg = <0x80000000 0x02000000>; /* 32MB RAM */
-    };
+memory@0 {
+    device_type = "memory";
+    reg = <0x80000000 0x02000000>; /* 32MB RAM */
 };
