@@ -22,13 +22,12 @@ jobs:
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-          ./scripts/feeds update luci
-          ./scripts/feeds install -a
 
       - name: Apply custom patches
         run: |
-          cp $GITHUB_WORKSPACE/target/linux/ath79/dts/mikrotik_rb711.dts openwrt/target/linux/ath79/dts/mikrotik_rb711.dts
-          cp $GITHUB_WORKSPACE/target/linux/ath79/dts/ar7241.dtsi openwrt/target/linux/ath79/dts/ar7241.dtsi
+          # Másold be az összes dts fájlt
+          cp -r $GITHUB_WORKSPACE/target/linux/ath79/dts/* openwrt/target/linux/ath79/dts/
+          # Másold be a saját generic.mk fájlt
           cp $GITHUB_WORKSPACE/target/linux/ath79/image/generic.mk openwrt/target/linux/ath79/image/generic.mk
 
       - name: Copy custom config
@@ -45,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rb711-build
-          path: openwrt/bin/targets/ 
+          path: openwrt/bin/targets/
