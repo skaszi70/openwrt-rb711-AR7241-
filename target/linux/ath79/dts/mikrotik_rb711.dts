@@ -1,56 +1,43 @@
 /dts-v1/;
-/include/ "ar7241.dtsi"
 
 / {
-    model = "MikroTik RB711";
-    compatible = "mikrotik,rb711", "qca,ar7241";
+    #include "ar7241.dtsi"
 
-    chosen {
-        bootargs = "console=ttyS0,115200";
-    };
+    compatible = "mikrotik,rb711", "qca,ar7241";
+    model = "MikroTik RouterBOARD 711";
 
     memory@0 {
         device_type = "memory";
-        reg = <0x00000000 0x04000000>; /* 64MB RAM */
+        reg = <0x00000000 0x02000000>; /* 32MB RAM */
     };
 
-    nand@0 {
-        compatible = "qca,nand";
-        reg = <0x00000000 0x1000000>;
-        nand-ecc-mode = "hw";
-        #address-cells = <1>;
-        #size-cells = <1>;
+    chosen {
+        bootargs = "console=ttyS0,115200 rootfstype=squashfs,jffs2";
+    };
 
-        partitions {
-            compatible = "fixed-partitions";
-            #address-cells = <1>;
-            #size-cells = <1>;
+    aliases {
+        led-boot = &led_power;
+        led-failsafe = &led_power;
+        led-running = &led_power;
+        led-upgrade = &led_power;
+    };
 
-            partition@0 {
-                label = "u-boot";
-                reg = <0x00000000 0x00040000>;
-                read-only;
-            };
+    leds {
+        compatible = "gpio-leds";
 
-            partition@40000 {
-                label = "firmware";
-                reg = <0x00040000 0x00fb0000>;
-            };
-
-            partition@ff0000 {
-                label = "art";
-                reg = <0x00ff0000 0x00010000>;
-                read-only;
-            };
+        led_power: power {
+            label = "rb711:green:power";
+            gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
         };
     };
-};
 
-&eth0 {
-    status = "okay";
-};
+    keys {
+        compatible = "gpio-keys";
 
-&wmac {
-    status = "okay";
-    mtd-mac-address = <&art 0x0>;
+        reset {
+            label = "reset";
+            gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
+            linux,code = <KEY_RESTART>;
+        };
+    };
 };
