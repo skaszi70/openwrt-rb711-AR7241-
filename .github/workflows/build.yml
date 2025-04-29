@@ -27,6 +27,8 @@ jobs:
         run: |
           # Másold be az összes dts fájlt
           cp -r $GITHUB_WORKSPACE/target/linux/ath79/dts/* openwrt/target/linux/ath79/dts/
+          # Másold be a saját Makefile-t is!
+          cp $GITHUB_WORKSPACE/target/linux/ath79/dts/Makefile openwrt/target/linux/ath79/dts/Makefile
           # Másold be a saját generic.mk fájlt
           cp $GITHUB_WORKSPACE/target/linux/ath79/image/generic.mk openwrt/target/linux/ath79/image/generic.mk
 
@@ -37,6 +39,8 @@ jobs:
       - name: Build firmware
         run: |
           cd openwrt
+          make distclean
+          cp ../.config .config
           make defconfig
           make -j1 V=sc
 
