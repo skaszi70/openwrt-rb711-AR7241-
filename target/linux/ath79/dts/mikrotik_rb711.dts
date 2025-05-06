@@ -1,15 +1,12 @@
 /dts-v1/;
+/include/ "ar7241.dtsi"
 
 / {
-    #include "ar7241.dtsi"
-
     compatible = "mikrotik,rb711", "qca,ar7241";
     model = "MikroTik RouterBOARD 711";
-
-    memory@0 {
-        device_type = "memory";
-        reg = <0x00000000 0x02000000>; /* 32MB RAM */
-    };
+    
+    ...
+};
 
     chosen {
         bootargs = "console=ttyS0,115200 rootfstype=squashfs,jffs2";
