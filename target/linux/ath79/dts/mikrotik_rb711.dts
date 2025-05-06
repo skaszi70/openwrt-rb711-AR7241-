@@ -4,37 +4,38 @@
 / {
     compatible = "mikrotik,rb711", "qca,ar7241";
     model = "MikroTik RouterBOARD 711";
-    
-    ...
-};
 
     chosen {
         bootargs = "console=ttyS0,115200 rootfstype=squashfs,jffs2";
     };
 
     aliases {
-        led-boot = &led_power;
-        led-failsafe = &led_power;
-        led-running = &led_power;
-        led-upgrade = &led_power;
+        serial0 = &uart;
     };
 
-    leds {
-        compatible = "gpio-leds";
+    memory@0 {
+        device_type = "memory";
+        reg = <0x00000000 0x02000000>;  /* 32MB RAM */
+    };
 
-        led_power: power {
-            label = "rb711:green:power";
-            gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+    soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "simple-bus";
+        ranges;
+
+        uart: serial@18020000 {
+            compatible = "ns16550a";
+            reg = <0x18020000 0x20>;
+            reg-shift = <2>;
+            clock-frequency = <40000000>;
+            interrupts = <3>;
         };
-    };
 
-    keys {
-        compatible = "gpio-keys";
-
-        reset {
-            label = "reset";
-            gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
-            linux,code = <KEY_RESTART>;
+        flash@1f000000 {
+            compatible = "cfi-flash";
+            reg = <0x1f000000 0x00800000>; /* 8MB flash */
+            bank-width = <2>;
         };
     };
 };
